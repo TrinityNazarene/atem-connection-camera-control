@@ -62,6 +62,9 @@
     "/README.md",
     "/LICENSE"
   ],
+  "peerDependencies": {
+    "atem-connection": "^3.4.0"
+  },
   "devDependencies": {
     "@sofie-automation/code-standard-preset": "^2.5.2",
     "@types/node": "18",
@@ -79,5 +82,11 @@
     "*.{ts,tsx,js,jsx}": [
       "yarn lint-fix"
     ]
+  },
+  "dependencies": {
+    "tslib": "^2.6.2"
+  },
+  "resolutions": {
+    "atem-connection": "portal:/home/julus/Projects/tv-automation-atem-connection"
   }
 }

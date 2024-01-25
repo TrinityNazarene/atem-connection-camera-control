@@ -22,7 +22,10 @@ __metadata:
     open-cli: "npm:^8.0.0"
     pinst: "npm:^3.0.0"
     rimraf: "npm:^5.0.5"
+    tslib: "npm:^2.6.2"
     typescript: "npm:^5.3.3"
+  peerDependencies:
+    atem-connection: ^3.4.0
   languageName: unknown
   linkType: soft
 
@@ -583,9 +586,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"atem-connection@npm:^3.4.0":
-  version: 3.4.0
-  resolution: "atem-connection@npm:3.4.0"
+"atem-connection@portal:/home/julus/Projects/tv-automation-atem-connection::locator=%40atem-connection%2Fcamera-control%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "atem-connection@portal:/home/julus/Projects/tv-automation-atem-connection::locator=%40atem-connection%2Fcamera-control%40workspace%3A."
   dependencies:
     "@julusian/freetype2": "npm:^1.1.2"
     debug: "npm:^4.3.4"
@@ -597,9 +600,8 @@ __metadata:
     threadedclass: "npm:^1.2.1"
     tslib: "npm:^2.6.2"
     wavefile: "npm:^8.4.6"
-  checksum: b1e002802be65871a10763eb7fcefa2f8bdd1352d6f486530b0369878c31fad9071c0832bdf200d012a590115aeab350e5b0bc0bdd42ce8f934fd6389c8f6347
   languageName: node
-  linkType: hard
+  linkType: soft
 
 "balanced-match@npm:^1.0.0":
   version: 1.0.2
