@@ -1,4 +1,5 @@
-import { AtemCameraControlChanges } from '../state.js'
+import { Commands } from 'atem-connection'
+import type { AtemCameraControlChanges } from '../state.js'
 
 export class ChangesBuilder {
 	readonly #changes = new Map<number, AtemCameraControlChanges>()
@@ -14,6 +15,9 @@ export class ChangesBuilder {
 				cameraId,
 				changes: [],
 				events: [],
+
+				unhandledMessages: [],
+				invalidMessages: [],
 			}
 			this.#changes.set(cameraId, entry)
 		}
@@ -32,4 +36,58 @@ export class ChangesBuilder {
 			entry.events.push(event)
 		}
 	}
+
+	addUnhandledMessage(cameraId: number, categoryId: number, parameterId: number): void {
+		const entry = this.#getEntry(cameraId)
+		entry.unhandledMessages.push({
+			categoryId,
+			parameterId,
+		})
+	}
+
+	checkMessageParameters(
+		command: Commands.CameraControlUpdateCommand,
+		expectedType: Commands.CameraControlDataType,
+		minCount: number
+	): boolean {
+		let isValid = command.properties.type === expectedType
+
+		if (isValid) {
+			switch (expectedType) {
+				case Commands.CameraControlDataType.BOOL:
+					isValid = command.properties.boolData.length >= minCount
+					break
+				case Commands.CameraControlDataType.SINT8:
+				case Commands.CameraControlDataType.SINT16:
+				case Commands.CameraControlDataType.SINT32:
+				case Commands.CameraControlDataType.FLOAT:
+					isValid = command.properties.numberData.length >= minCount
+					break
+				case Commands.CameraControlDataType.SINT64:
+					isValid = command.properties.bigintData.length >= minCount
+					break
+				case Commands.CameraControlDataType.STRING:
+					isValid = command.properties.stringData.length >= minCount
+					break
+				default:
+					assertNever(expectedType)
+					isValid = false
+					break
+			}
+		}
+
+		if (!isValid) {
+			const entry = this.#getEntry(command.source)
+			entry.invalidMessages.push({
+				categoryId: command.category,
+				parameterId: command.parameter,
+			})
+		}
+
+		return isValid
+	}
+}
+
+export function assertNever(_val: never): void {
+	// Nothing to do
 }

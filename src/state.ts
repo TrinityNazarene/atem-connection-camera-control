@@ -6,6 +6,14 @@ export enum VideoSharpeningLevel {
 	Medium = 2,
 	High = 3,
 }
+
+export interface ColorAdjust {
+	red: number
+	green: number
+	blue: number
+	luma: number
+}
+
 export interface AtemCameraControlState {
 	readonly cameraId: number
 
@@ -93,34 +101,37 @@ export interface AtemCameraControlState {
 		ndFilterStop: number
 	}
 
-	// TODO
+	display: {
+		// brightness: number
+		// exposureAndFocusTools: unknown
+		// zebraLevel: number
+		// peakingLevel: number
 
-	// gain: string
-	// gainValue: number
-	// whiteBalance: string
-	// whiteBalanceValue: number
-	// liftR: number
-	// gammaR: number
-	// gainR: number
-	// liftG: number
-	// gammaG: number
-	// gainG: number
-	// liftB: number
-	// gammaB: number
-	// gainB: number
-	// liftY: number
-	// gammaY: number
-	// gainY: number
-	// liftRGBY: number[]
-	// gainRGBY: number[]
-	// gammaRGBY: number[]
-	// lumMix: number
-	// hue: number
-	// shutter: string
-	// shutterValue: number
-	// contrast: number
-	// saturation: number
-	// command: string
+		colorBarEnable: boolean
+
+		// focusAssist: unknown
+		// programReturnFeedEnable: boolean
+		// timecodeSource: unknown
+	}
+
+	colorCorrection: {
+		liftAdjust: ColorAdjust
+		gammaAdjust: ColorAdjust
+		gainAdjust: ColorAdjust
+		offsetAdjust: ColorAdjust
+
+		contrastAdjust: {
+			pivot: number
+			adj: number
+		}
+
+		lumaMix: number
+
+		colorAdjust: {
+			hue: number
+			saturation: number
+		}
+	}
 }
 
 export interface AtemCameraControlChanges {
@@ -128,4 +139,7 @@ export interface AtemCameraControlChanges {
 
 	changes: string[]
 	events: string[]
+
+	unhandledMessages: Array<{ categoryId: number; parameterId: number }>
+	invalidMessages: Array<{ categoryId: number; parameterId: number }>
 }

@@ -1,6 +1,5 @@
-import type { Commands } from 'atem-connection'
+import { Commands } from 'atem-connection'
 import { ChangesBuilder } from './builder.js'
-import { CameraControlDataType } from 'atem-connection/dist/commands/index.js'
 import { AtemCameraControlState } from '../state.js'
 
 export function applyLensCommand(
@@ -8,20 +7,12 @@ export function applyLensCommand(
 	command: Commands.CameraControlUpdateCommand,
 	state: AtemCameraControlState
 ): void {
-	// // HACK - adjust scaling
-	// if (command.properties.type === CameraControlDataType.FLOAT) {
-	// 	for (let i = 0; i < command.properties.numberData.length; i++) {
-	// 		command.properties.numberData[i] *= 0x7ff / 0x800
-	// 	}
-	// }
 	switch (command.parameter) {
 		case 0: {
-			if (command.properties.type !== CameraControlDataType.FLOAT || command.properties.numberData.length < 1) {
-				// TODO - report error
-				return
-			}
+			if (!changes.checkMessageParameters(command, Commands.CameraControlDataType.FLOAT, 1)) return
 
-			const normalisedFocus = command.properties.numberData[0] / 32 + 0.5
+			// TODO - verify this maths
+			const normalisedFocus = command.properties.numberData[0] / 32
 			state.lens.focus = normalisedFocus // Math.round(normalisedFocus * 1000) / 1000
 			changes.addChange(command.source, 'lens.focus')
 			return
@@ -32,17 +23,10 @@ export function applyLensCommand(
 			return
 		}
 		case 2: {
-			if (command.properties.type !== CameraControlDataType.FLOAT || command.properties.numberData.length < 1) {
-				// TODO - report error
-				return
-			}
+			if (!changes.checkMessageParameters(command, Commands.CameraControlDataType.FLOAT, 1)) return
 
-			// let real = (command.properties.numberData[0] >> 11) - 16
-			// real += (command.properties.numberData[0] & 0x7ff) / 0x800
-			const normalisedIris = command.properties.numberData[0]
-			// const normalisedIris = (command.properties.numberData[0] - 1.5) / 8.5
-			// console.log('real', real, normalisedIris)
-			state.lens.iris = normalisedIris //Math.round(normalisedIris * 1000) / 1000
+			// TODO - verify range
+			state.lens.iris = command.properties.numberData[0]
 			changes.addChange(command.source, 'lens.iris')
 			return
 		}
@@ -64,8 +48,7 @@ export function applyLensCommand(
 		// 				break
 		// 			}
 		default:
-			// TODO - unused
-			console.log('unhandled source', command.parameter)
+			changes.addUnhandledMessage(command.source, command.category, command.parameter)
 			return
 	}
 }
