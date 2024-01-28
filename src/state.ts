@@ -38,20 +38,20 @@ export interface AtemCameraControlState {
 		/** Optical image stabilisation */
 		opticalImageStabilisation: boolean
 
-		/**
-		 * Absolute zoom position (normalised)
-		 * 0.0 = wide
-		 * 1.0 = tele
-		 */
-		zoomPosition: number
+		// /**
+		//  * Absolute zoom position (normalised)
+		//  * 0.0 = wide
+		//  * 1.0 = tele
+		//  */
+		// zoomPosition: number
 
-		/**
-		 * Zoom at specified speed
-		 * -1.0 = zoom wider fast
-		 *  0.0 = stop
-		 * +1.0 = zoom tele fast
-		 */
-		zoomSpeed: number
+		// /**
+		//  * Zoom at specified speed
+		//  * -1.0 = zoom wider fast
+		//  *  0.0 = stop
+		//  * +1.0 = zoom tele fast
+		//  */
+		// zoomSpeed: number
 	}
 
 	video: {
