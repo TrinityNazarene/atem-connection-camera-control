@@ -2,6 +2,7 @@ import { Commands } from 'atem-connection'
 import { ChangesTracker, assertNever } from './changesTracker.js'
 import { AtemCameraControlState } from '../state.js'
 import { AtemCameraControlVideoParameter } from '../ids.js'
+import { AtemCameraControlEvents } from '../changes.js'
 
 export function applyVideoCommand(
 	changes: ChangesTracker,
@@ -20,6 +21,10 @@ export function applyVideoCommand(
 			state.video.whiteBalance = [command.properties.numberData[0], command.properties.numberData[1]]
 
 			changes.addChange(command.source, 'video.whiteBalance')
+			return
+		}
+		case AtemCameraControlVideoParameter.SetAutoWhiteBalance: {
+			changes.addEvent(command.source, AtemCameraControlEvents.VideoAutoWhiteBalance)
 			return
 		}
 		case AtemCameraControlVideoParameter.ExposureUs: {

@@ -1,13 +1,20 @@
 import { Commands } from 'atem-connection'
-import { AtemCameraControlCategory, AtemCameraControlDisplayParameter, AtemCameraControlLensParameter } from '../ids'
+import {
+	AtemCameraControlCategory,
+	AtemCameraControlColorCorrectionParameter,
+	AtemCameraControlDisplayParameter,
+	AtemCameraControlLensParameter,
+	AtemCameraControlVideoParameter,
+} from '../ids'
 import { constructNumberProps, constructBooleanProps } from './props'
+import { VideoSharpeningLevel } from '../state'
 
 export abstract class AtemCameraControlCommandGenerator<TRes> {
 	protected abstract addCommand(command: Commands.CameraControlCommand): TRes
 
-	// Iris
+	// Lens
 
-	focus(cameraId: number, value: number, relative = false): TRes {
+	lensFocus(cameraId: number, value: number, relative = false): TRes {
 		const command = new Commands.CameraControlCommand(
 			cameraId,
 			AtemCameraControlCategory.Lens,
@@ -18,7 +25,7 @@ export abstract class AtemCameraControlCommandGenerator<TRes> {
 		return this.addCommand(command)
 	}
 
-	triggerAutoFocus(cameraId: number): TRes {
+	lensTriggerAutoFocus(cameraId: number): TRes {
 		const command = new Commands.CameraControlCommand(
 			cameraId,
 			AtemCameraControlCategory.Lens,
@@ -29,7 +36,7 @@ export abstract class AtemCameraControlCommandGenerator<TRes> {
 		return this.addCommand(command)
 	}
 
-	irisFStop(cameraId: number, value: number, relative = false): TRes {
+	lensIrisFStop(cameraId: number, value: number, relative = false): TRes {
 		const command = new Commands.CameraControlCommand(
 			cameraId,
 			AtemCameraControlCategory.Lens,
@@ -40,7 +47,7 @@ export abstract class AtemCameraControlCommandGenerator<TRes> {
 		return this.addCommand(command)
 	}
 
-	irisNormalised(cameraId: number, value: number, relative = false): TRes {
+	lensIrisNormalised(cameraId: number, value: number, relative = false): TRes {
 		const command = new Commands.CameraControlCommand(
 			cameraId,
 			AtemCameraControlCategory.Lens,
@@ -51,7 +58,7 @@ export abstract class AtemCameraControlCommandGenerator<TRes> {
 		return this.addCommand(command)
 	}
 
-	triggerAutoIris(cameraId: number): TRes {
+	lensTriggerAutoIris(cameraId: number): TRes {
 		const command = new Commands.CameraControlCommand(
 			cameraId,
 			AtemCameraControlCategory.Lens,
@@ -62,12 +69,92 @@ export abstract class AtemCameraControlCommandGenerator<TRes> {
 		return this.addCommand(command)
 	}
 
-	enableOpticalImageStabilisation(cameraId: number, enable: boolean): TRes {
+	lensEnableOpticalImageStabilisation(cameraId: number, enable: boolean): TRes {
 		const command = new Commands.CameraControlCommand(
 			cameraId,
 			AtemCameraControlCategory.Lens,
 			AtemCameraControlLensParameter.OpticalImageStabilisation,
 			constructBooleanProps([enable])
+		)
+
+		return this.addCommand(command)
+	}
+
+	// Video
+
+	videoManualWhiteBalance(cameraId: number, colorTemperature: number, tint: number, relative = false): TRes {
+		const command = new Commands.CameraControlCommand(
+			cameraId,
+			AtemCameraControlCategory.Video,
+			AtemCameraControlVideoParameter.ManualWhiteBalance,
+			constructNumberProps(Commands.CameraControlDataType.SINT16, [colorTemperature, tint], relative)
+		)
+
+		return this.addCommand(command)
+	}
+
+	videoTriggerAutoWhiteBalance(cameraId: number): TRes {
+		const command = new Commands.CameraControlCommand(
+			cameraId,
+			AtemCameraControlCategory.Video,
+			AtemCameraControlVideoParameter.SetAutoWhiteBalance,
+			constructBooleanProps([])
+		)
+
+		return this.addCommand(command)
+	}
+
+	videoExposureUs(cameraId: number, us: number, relative = false): TRes {
+		const command = new Commands.CameraControlCommand(
+			cameraId,
+			AtemCameraControlCategory.Video,
+			AtemCameraControlVideoParameter.ExposureUs,
+			constructNumberProps(Commands.CameraControlDataType.SINT32, [us], relative)
+		)
+
+		return this.addCommand(command)
+	}
+
+	// This doesn't get reflected in the state, so is rather confusing
+	// exposureOrdinal(cameraId: number, step: number, relative = false): TRes {
+	// 	const command = new Commands.CameraControlCommand(
+	// 		cameraId,
+	// 		AtemCameraControlCategory.Video,
+	// 		AtemCameraControlVideoParameter.ExposureOrdinal,
+	// 		constructNumberProps(Commands.CameraControlDataType.SINT16, [step], relative)
+	// 	)
+
+	// 	return this.addCommand(command)
+	// }
+
+	videoSharpeningLevel(cameraId: number, level: VideoSharpeningLevel): TRes {
+		const command = new Commands.CameraControlCommand(
+			cameraId,
+			AtemCameraControlCategory.Video,
+			AtemCameraControlVideoParameter.VideoSharpeningLevel,
+			constructNumberProps(Commands.CameraControlDataType.SINT8, [level])
+		)
+
+		return this.addCommand(command)
+	}
+
+	videoGain(cameraId: number, gain: number): TRes {
+		const command = new Commands.CameraControlCommand(
+			cameraId,
+			AtemCameraControlCategory.Video,
+			AtemCameraControlVideoParameter.Gain,
+			constructNumberProps(Commands.CameraControlDataType.SINT8, [gain])
+		)
+
+		return this.addCommand(command)
+	}
+
+	videoNdFilterStop(cameraId: number, stop: number): TRes {
+		const command = new Commands.CameraControlCommand(
+			cameraId,
+			AtemCameraControlCategory.Video,
+			AtemCameraControlVideoParameter.NDFilterStop,
+			constructNumberProps(Commands.CameraControlDataType.FLOAT, [stop])
 		)
 
 		return this.addCommand(command)
@@ -81,6 +168,103 @@ export abstract class AtemCameraControlCommandGenerator<TRes> {
 			AtemCameraControlCategory.Display,
 			AtemCameraControlDisplayParameter.ColorBarEnable,
 			constructNumberProps(Commands.CameraControlDataType.SINT8, [enable ? 30 : 0])
+		)
+
+		return this.addCommand(command)
+	}
+
+	// Color Correction
+
+	colorLiftAdjust(cameraId: number, red: number, green: number, blue: number, luma: number, relative = false): TRes {
+		const command = new Commands.CameraControlCommand(
+			cameraId,
+			AtemCameraControlCategory.ColorCorrection,
+			AtemCameraControlColorCorrectionParameter.LiftAdjust,
+			constructNumberProps(Commands.CameraControlDataType.FLOAT, [red, green, blue, luma], relative)
+		)
+
+		return this.addCommand(command)
+	}
+
+	colorGammaAdjust(cameraId: number, red: number, green: number, blue: number, luma: number, relative = false): TRes {
+		const command = new Commands.CameraControlCommand(
+			cameraId,
+			AtemCameraControlCategory.ColorCorrection,
+			AtemCameraControlColorCorrectionParameter.GammaAdjust,
+			constructNumberProps(Commands.CameraControlDataType.FLOAT, [red, green, blue, luma], relative)
+		)
+
+		return this.addCommand(command)
+	}
+
+	colorGainAdjust(cameraId: number, red: number, green: number, blue: number, luma: number, relative = false): TRes {
+		const command = new Commands.CameraControlCommand(
+			cameraId,
+			AtemCameraControlCategory.ColorCorrection,
+			AtemCameraControlColorCorrectionParameter.GainAdjust,
+			constructNumberProps(Commands.CameraControlDataType.FLOAT, [red, green, blue, luma], relative)
+		)
+
+		return this.addCommand(command)
+	}
+
+	colorOffsetAdjust(
+		cameraId: number,
+		red: number,
+		green: number,
+		blue: number,
+		luma: number,
+		relative = false
+	): TRes {
+		const command = new Commands.CameraControlCommand(
+			cameraId,
+			AtemCameraControlCategory.ColorCorrection,
+			AtemCameraControlColorCorrectionParameter.OffsetAdjust,
+			constructNumberProps(Commands.CameraControlDataType.FLOAT, [red, green, blue, luma], relative)
+		)
+
+		return this.addCommand(command)
+	}
+
+	colorContrastAdjust(cameraId: number, constrast: number, pivot: number, relative = false): TRes {
+		const command = new Commands.CameraControlCommand(
+			cameraId,
+			AtemCameraControlCategory.ColorCorrection,
+			AtemCameraControlColorCorrectionParameter.ContrastAdjust,
+			constructNumberProps(Commands.CameraControlDataType.FLOAT, [pivot, constrast], relative)
+		)
+
+		return this.addCommand(command)
+	}
+
+	colorLumaMix(cameraId: number, lumaMix: number, relative = false): TRes {
+		const command = new Commands.CameraControlCommand(
+			cameraId,
+			AtemCameraControlCategory.ColorCorrection,
+			AtemCameraControlColorCorrectionParameter.LumaMix,
+			constructNumberProps(Commands.CameraControlDataType.FLOAT, [lumaMix], relative)
+		)
+
+		return this.addCommand(command)
+	}
+
+	colorHueSaturationAdjust(cameraId: number, hue: number, saturation: number, relative = false): TRes {
+		const command = new Commands.CameraControlCommand(
+			cameraId,
+			AtemCameraControlCategory.ColorCorrection,
+			AtemCameraControlColorCorrectionParameter.ColorAdjust,
+			constructNumberProps(Commands.CameraControlDataType.FLOAT, [hue, saturation], relative)
+		)
+
+		return this.addCommand(command)
+	}
+
+	colorResetAllToDefault(cameraId: number): TRes {
+		const command = new Commands.CameraControlCommand(
+			cameraId,
+			AtemCameraControlCategory.ColorCorrection,
+			AtemCameraControlColorCorrectionParameter.ResetToDefaults,
+			constructBooleanProps([])
 		)
 
 		return this.addCommand(command)

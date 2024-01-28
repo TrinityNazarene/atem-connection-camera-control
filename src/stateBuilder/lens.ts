@@ -2,6 +2,7 @@ import { Commands } from 'atem-connection'
 import { ChangesTracker, assertNever } from './changesTracker.js'
 import { AtemCameraControlState } from '../state.js'
 import { AtemCameraControlLensParameter } from '../ids.js'
+import { AtemCameraControlEvents } from '../changes.js'
 
 export function applyLensCommand(
 	changes: ChangesTracker,
@@ -18,8 +19,7 @@ export function applyLensCommand(
 			return
 		}
 		case AtemCameraControlLensParameter.AutoFocus: {
-			//Auto Focus
-			changes.addEvent(command.source, 'lens.autoFocus')
+			changes.addEvent(command.source, AtemCameraControlEvents.LensAutoFocus)
 			return
 		}
 		case AtemCameraControlLensParameter.ApertureFStop: {
@@ -31,8 +31,7 @@ export function applyLensCommand(
 			return
 		}
 		case AtemCameraControlLensParameter.AutoAperture: {
-			//Auto Iris
-			changes.addEvent(command.source, 'lens.autoIris')
+			changes.addEvent(command.source, AtemCameraControlEvents.LensAutoIris)
 			return
 		}
 		case AtemCameraControlLensParameter.OpticalImageStabilisation: {

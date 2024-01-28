@@ -2,6 +2,7 @@ import { Commands } from 'atem-connection'
 import { ChangesTracker, assertNever } from './changesTracker.js'
 import { AtemCameraControlState } from '../state.js'
 import { AtemCameraControlColorCorrectionParameter } from '../ids.js'
+import { AtemCameraControlEvents } from '../changes.js'
 
 export function applyColorCorrectionCommand(
 	changes: ChangesTracker,
@@ -89,8 +90,7 @@ export function applyColorCorrectionCommand(
 		}
 
 		case AtemCameraControlColorCorrectionParameter.ResetToDefaults:
-			// Not implemented
-			changes.addUnhandledMessage(command)
+			changes.addEvent(command.source, AtemCameraControlEvents.ColorResetToDefault)
 			return
 
 		default:
