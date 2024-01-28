@@ -1,40 +1,8 @@
 import type { Commands } from 'atem-connection'
-import { CameraControlDataType } from 'atem-connection/dist/commands'
-import { AtemCameraControlChanges, AtemCameraControlState, VideoSharpeningLevel } from './state'
-
-class ChangesBuilder {
-	readonly #changes = new Map<number, AtemCameraControlChanges>()
-
-	getResult(): AtemCameraControlChanges[] {
-		return Array.from(this.#changes.values())
-	}
-
-	#getEntry(cameraId: number): AtemCameraControlChanges {
-		let entry = this.#changes.get(cameraId)
-		if (!entry) {
-			entry = {
-				cameraId,
-				changes: [],
-				events: [],
-			}
-			this.#changes.set(cameraId, entry)
-		}
-		return entry
-	}
-
-	addChange(cameraId: number, path: string): void {
-		const entry = this.#getEntry(cameraId)
-		if (!entry.changes.includes(path)) {
-			entry.changes.push(path)
-		}
-	}
-	addEvent(cameraId: number, event: string): void {
-		const entry = this.#getEntry(cameraId)
-		if (!entry.events.includes(event)) {
-			entry.events.push(event)
-		}
-	}
-}
+import { AtemCameraControlState, VideoSharpeningLevel } from './state.js'
+import { ChangesBuilder } from './stateBuilder/builder.js'
+import { applyVideoCommand } from './stateBuilder/video.js'
+import { applyLensCommand } from './stateBuilder/lens.js'
 
 export class AtemCameraControlStateBuilder {
 	readonly #states = new Map<number, AtemCameraControlState>()
@@ -69,7 +37,7 @@ export class AtemCameraControlStateBuilder {
 				// recordingFormat: [number, number, number, number]
 				// setAutoExpsureMode: number
 				// shutterAngle: 0,
-				// shutterSpeed: 0,
+				shutterSpeed: 0,
 				gain: 0,
 				// iso: 0,
 				// displayLut: [number, boolean]
@@ -111,12 +79,14 @@ export class AtemCameraControlStateBuilder {
 		const changes = new ChangesBuilder()
 
 		for (const command of commands) {
+			const state = this.#getOrCreateCamera(command.source)
+
 			switch (command.category) {
 				case 0:
-					this.#applyLensCommand(changes, command)
+					applyLensCommand(changes, command, state)
 					break
 				case 1:
-					this.#applyCameraCommand(changes, command)
+					applyVideoCommand(changes, command, state)
 					break
 				default:
 					console.log('Unknown command')
@@ -200,173 +170,5 @@ export class AtemCameraControlStateBuilder {
 		// 		break
 		// 	}
 		// }
-	}
-
-	#applyLensCommand(changes: ChangesBuilder, command: Commands.CameraControlUpdateCommand): void {
-		const state = this.#getOrCreateCamera(command.source)
-
-		// // HACK - adjust scaling
-		// if (command.properties.type === CameraControlDataType.FLOAT) {
-		// 	for (let i = 0; i < command.properties.numberData.length; i++) {
-		// 		command.properties.numberData[i] *= 0x7ff / 0x800
-		// 	}
-		// }
-		switch (command.parameter) {
-			case 0: {
-				if (
-					command.properties.type !== CameraControlDataType.FLOAT ||
-					command.properties.numberData.length < 1
-				) {
-					// TODO - report error
-					return
-				}
-
-				const normalisedFocus = command.properties.numberData[0] / 32 + 0.5
-				state.lens.focus = normalisedFocus // Math.round(normalisedFocus * 1000) / 1000
-				changes.addChange(command.source, 'lens.focus')
-				return
-			}
-			case 1: {
-				//Auto Focus
-				changes.addEvent(command.source, 'lens.autoFocus')
-				return
-			}
-			case 2: {
-				if (
-					command.properties.type !== CameraControlDataType.FLOAT ||
-					command.properties.numberData.length < 1
-				) {
-					// TODO - report error
-					return
-				}
-
-				// let real = (command.properties.numberData[0] >> 11) - 16
-				// real += (command.properties.numberData[0] & 0x7ff) / 0x800
-				const normalisedIris = command.properties.numberData[0]
-				// const normalisedIris = (command.properties.numberData[0] - 1.5) / 8.5
-				// console.log('real', real, normalisedIris)
-				state.lens.iris = normalisedIris //Math.round(normalisedIris * 1000) / 1000
-				changes.addChange(command.source, 'lens.iris')
-				return
-			}
-			case 3: {
-				//Auto Iris
-				changes.addEvent(command.source, 'lens.autoIris')
-				return
-			}
-			// 			case 8: {
-			// 				//Zoom position
-			// 				changed['zoomPosition'] = rawCommand.readUInt16BE(16) / 2048
-			// 				changed['command'] = 'zoom'
-			// 				break
-			// 			}
-			// 			case 9: {
-			// 				//Zoom speed
-			// 				changed['zoomSpeed'] = rawCommand.readInt16BE(16) / 2048
-			// 				changed['command'] = 'zoom'
-			// 				break
-			// 			}
-			default:
-				// TODO - unused
-				console.log('unhandled source', command.parameter)
-				return
-		}
-	}
-
-	#applyCameraCommand(changes: ChangesBuilder, command: Commands.CameraControlUpdateCommand): void {
-		const state = this.#getOrCreateCamera(command.source)
-
-		// // HACK - adjust scaling
-		// if (command.properties.type === CameraControlDataType.FLOAT) {
-		// 	for (let i = 0; i < command.properties.numberData.length; i++) {
-		// 		command.properties.numberData[i] *= 0x7ff / 0x800
-		// 	}
-		// }
-		switch (command.parameter) {
-			case 1: {
-				// Gain (up to Camera 4.9)
-				return
-			}
-			case 2: {
-				if (
-					command.properties.type !== CameraControlDataType.SINT16 ||
-					command.properties.numberData.length < 2
-				) {
-					// TODO - report error
-					return
-				}
-
-				state.video.whiteBalance = [command.properties.numberData[0], command.properties.numberData[1]]
-
-				changes.addChange(command.source, 'video.whiteBalance')
-				return
-			}
-			case 5: {
-				if (
-					command.properties.type !== CameraControlDataType.SINT32 ||
-					command.properties.numberData.length < 1
-				) {
-					// TODO - report error
-					return
-				}
-
-				const shutterSpeedRaw = 1000000 / command.properties.numberData[0]
-				const shutterSpeedRounded =
-					shutterSpeedRaw > 1000 ? 10 * Math.round(shutterSpeedRaw / 10) : Math.round(shutterSpeedRaw)
-
-				state.video.exposure = command.properties.numberData[0]
-				state.video.shutterSpeed = shutterSpeedRounded
-
-				changes.addChange(command.source, 'video.exposure')
-				changes.addChange(command.source, 'video.shutterSpeed')
-				return
-			}
-			case 8: {
-				if (
-					command.properties.type !== CameraControlDataType.SINT8 ||
-					command.properties.numberData.length < 1
-				) {
-					// TODO - report error
-					return
-				}
-
-				state.video.videoSharpeningLevel = command.properties.numberData[0]
-
-				changes.addChange(command.source, 'video.videoSharpeningLevel')
-				return
-			}
-			case 13: {
-				if (
-					command.properties.type !== CameraControlDataType.SINT8 ||
-					command.properties.numberData.length < 1
-				) {
-					// TODO - report error
-					return
-				}
-
-				state.video.gain = command.properties.numberData[0]
-
-				changes.addChange(command.source, 'video.gain')
-				return
-			}
-			case 16: {
-				if (
-					command.properties.type !== CameraControlDataType.FLOAT ||
-					command.properties.numberData.length < 1
-				) {
-					// TODO - report error
-					return
-				}
-
-				state.video.ndFilterStop = command.properties.numberData[0] + 16 // TODO
-
-				changes.addChange(command.source, 'video.ndFilterStop')
-				return
-			}
-			default:
-				// TODO - log
-				console.log('unhandled video', command.parameter)
-				return
-		}
 	}
 }
