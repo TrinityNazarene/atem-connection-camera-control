@@ -1,12 +1,12 @@
 import type { Commands } from 'atem-connection'
-import type { AtemCameraControlState } from './state.js'
-import { ChangesBuilder, assertNever } from './stateBuilder/builder.js'
-import { applyVideoCommand } from './stateBuilder/video.js'
-import { applyLensCommand } from './stateBuilder/lens.js'
-import { applyDisplayCommand } from './stateBuilder/display.js'
-import { applyColorCorrectionCommand } from './stateBuilder/colorCorrection.js'
-import { createEmptyState } from './emptyState.js'
-import { AtemCameraControlCategory } from './ids.js'
+import type { AtemCameraControlState } from '../state.js'
+import { ChangesTracker, assertNever } from './changesTracker.js'
+import { applyVideoCommand } from './video.js'
+import { applyLensCommand } from './lens.js'
+import { applyDisplayCommand } from './display.js'
+import { applyColorCorrectionCommand } from './colorCorrection.js'
+import { createEmptyState } from '../emptyState.js'
+import { AtemCameraControlCategory } from '../ids.js'
 
 export class AtemCameraControlStateBuilder {
 	readonly #states = new Map<number, AtemCameraControlState>()
@@ -44,7 +44,7 @@ export class AtemCameraControlStateBuilder {
 
 		console.log(`TODO - apply ${commands.length} commands`)
 
-		const changes = new ChangesBuilder()
+		const changes = new ChangesTracker()
 
 		for (const command of commands) {
 			const state = this.#getOrCreateCamera(command.source)

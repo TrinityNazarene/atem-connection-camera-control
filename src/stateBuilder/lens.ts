@@ -1,10 +1,10 @@
 import { Commands } from 'atem-connection'
-import { ChangesBuilder, assertNever } from './builder.js'
+import { ChangesTracker, assertNever } from './changesTracker.js'
 import { AtemCameraControlState } from '../state.js'
 import { AtemCameraControlLensParameter } from '../ids.js'
 
 export function applyLensCommand(
-	changes: ChangesBuilder,
+	changes: ChangesTracker,
 	command: Commands.CameraControlUpdateCommand,
 	state: AtemCameraControlState
 ): void {
@@ -35,9 +35,16 @@ export function applyLensCommand(
 			changes.addEvent(command.source, 'lens.autoIris')
 			return
 		}
+		case AtemCameraControlLensParameter.OpticalImageStabilisation: {
+			if (!changes.checkMessageParameters(command, Commands.CameraControlDataType.BOOL, 1)) return
+
+			state.lens.opticalImageStabilisation = command.properties.boolData[0]
+			changes.addChange(command.source, 'lens.opticalImageStabilisation')
+			return
+		}
+
 		case AtemCameraControlLensParameter.ApertureNormalised:
 		case AtemCameraControlLensParameter.ApertureOrdinal:
-		case AtemCameraControlLensParameter.OpticalImageStabilisation:
 		case AtemCameraControlLensParameter.SetAbsoluteZoomMM:
 		case AtemCameraControlLensParameter.SetAbsoluteZoomNormalised:
 		case AtemCameraControlLensParameter.SetContinuousZoomSpeed:

@@ -1,10 +1,10 @@
 import { Commands } from 'atem-connection'
-import { ChangesBuilder, assertNever } from './builder.js'
+import { ChangesTracker, assertNever } from './changesTracker.js'
 import { AtemCameraControlState } from '../state.js'
 import { AtemCameraControlColorCorrectionParameter } from '../ids.js'
 
 export function applyColorCorrectionCommand(
-	changes: ChangesBuilder,
+	changes: ChangesTracker,
 	command: Commands.CameraControlUpdateCommand,
 	state: AtemCameraControlState
 ): void {
