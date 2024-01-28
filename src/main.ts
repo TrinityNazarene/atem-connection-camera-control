@@ -1,9 +1,9 @@
-export * from './commandSender/baseGenerator.js'
-export * from './commandSender/batchSender.js'
-export * from './commandSender/directSender.js'
+export * from './commandSender/baseGenerator'
+export * from './commandSender/batchSender'
+export * from './commandSender/directSender'
 
-export * from './stateBuilder/stateBuilder.js'
+export * from './stateBuilder/stateBuilder'
 
-export * from './changes.js'
-export * from './emptyState.js'
-export * from './state.js'
+export * from './changes'
+export * from './emptyState'
+export * from './state'

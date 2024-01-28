@@ -1,12 +1,12 @@
 import type { Commands } from 'atem-connection'
-import type { AtemCameraControlState } from '../state.js'
-import { ChangesTracker, assertNever } from './changesTracker.js'
-import { applyVideoCommand } from './video.js'
-import { applyLensCommand } from './lens.js'
-import { applyDisplayCommand } from './display.js'
-import { applyColorCorrectionCommand } from './colorCorrection.js'
-import { createEmptyState } from '../emptyState.js'
-import { AtemCameraControlCategory } from '../ids.js'
+import type { AtemCameraControlState } from '../state'
+import { ChangesTracker, assertNever } from './changesTracker'
+import { applyVideoCommand } from './video'
+import { applyLensCommand } from './lens'
+import { applyDisplayCommand } from './display'
+import { applyColorCorrectionCommand } from './colorCorrection'
+import { createEmptyState } from '../emptyState'
+import { AtemCameraControlCategory } from '../ids'
 
 export class AtemCameraControlStateBuilder {
 	readonly #states = new Map<number, AtemCameraControlState>()

@@ -16,7 +16,7 @@ export function constructBooleanProps(boolData: boolean[]): Commands.CameraContr
 export function constructNumberProps(
 	type: Commands.CameraControlDataType,
 	numberData: number[],
-	relative: boolean = false
+	relative = false
 ): Commands.CameraControlPacket {
 	return {
 		type,
