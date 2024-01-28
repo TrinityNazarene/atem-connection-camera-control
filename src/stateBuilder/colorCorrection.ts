@@ -1,14 +1,16 @@
 import { Commands } from 'atem-connection'
-import { ChangesBuilder } from './builder.js'
+import { ChangesBuilder, assertNever } from './builder.js'
 import { AtemCameraControlState } from '../state.js'
+import { AtemCameraControlColorCorrectionParameter } from '../ids.js'
 
 export function applyColorCorrectionCommand(
 	changes: ChangesBuilder,
 	command: Commands.CameraControlUpdateCommand,
 	state: AtemCameraControlState
 ): void {
-	switch (command.parameter) {
-		case 0: {
+	const parameter = command.parameter as AtemCameraControlColorCorrectionParameter
+	switch (parameter) {
+		case AtemCameraControlColorCorrectionParameter.LiftAdjust: {
 			if (!changes.checkMessageParameters(command, Commands.CameraControlDataType.FLOAT, 4)) return
 
 			state.colorCorrection.liftAdjust = {
@@ -20,7 +22,7 @@ export function applyColorCorrectionCommand(
 			changes.addChange(command.source, 'colorCorrection.liftAdjust')
 			return
 		}
-		case 1: {
+		case AtemCameraControlColorCorrectionParameter.GammaAdjust: {
 			if (!changes.checkMessageParameters(command, Commands.CameraControlDataType.FLOAT, 4)) return
 
 			state.colorCorrection.gammaAdjust = {
@@ -32,7 +34,7 @@ export function applyColorCorrectionCommand(
 			changes.addChange(command.source, 'colorCorrection.gammaAdjust')
 			return
 		}
-		case 2: {
+		case AtemCameraControlColorCorrectionParameter.GainAdjust: {
 			if (!changes.checkMessageParameters(command, Commands.CameraControlDataType.FLOAT, 4)) return
 
 			state.colorCorrection.gainAdjust = {
@@ -44,7 +46,7 @@ export function applyColorCorrectionCommand(
 			changes.addChange(command.source, 'colorCorrection.gainAdjust')
 			return
 		}
-		case 3: {
+		case AtemCameraControlColorCorrectionParameter.OffsetAdjust: {
 			if (!changes.checkMessageParameters(command, Commands.CameraControlDataType.FLOAT, 4)) return
 
 			state.colorCorrection.offsetAdjust = {
@@ -56,7 +58,7 @@ export function applyColorCorrectionCommand(
 			changes.addChange(command.source, 'colorCorrection.offsetAdjust')
 			return
 		}
-		case 4: {
+		case AtemCameraControlColorCorrectionParameter.ContrastAdjust: {
 			if (!changes.checkMessageParameters(command, Commands.CameraControlDataType.FLOAT, 2)) return
 
 			state.colorCorrection.contrastAdjust = {
@@ -66,7 +68,7 @@ export function applyColorCorrectionCommand(
 			changes.addChange(command.source, 'colorCorrection.contrastAdjust')
 			return
 		}
-		case 5: {
+		case AtemCameraControlColorCorrectionParameter.LumaMix: {
 			if (!changes.checkMessageParameters(command, Commands.CameraControlDataType.FLOAT, 1)) return
 
 			state.colorCorrection.lumaMix = command.properties.numberData[0]
@@ -74,7 +76,7 @@ export function applyColorCorrectionCommand(
 			changes.addChange(command.source, 'colorCorrection.lumaMix')
 			return
 		}
-		case 6: {
+		case AtemCameraControlColorCorrectionParameter.ColorAdjust: {
 			if (!changes.checkMessageParameters(command, Commands.CameraControlDataType.FLOAT, 2)) return
 
 			state.colorCorrection.colorAdjust = {
@@ -86,8 +88,14 @@ export function applyColorCorrectionCommand(
 			return
 		}
 
+		case AtemCameraControlColorCorrectionParameter.ResetToDefaults:
+			// Not implemented
+			changes.addUnhandledMessage(command)
+			return
+
 		default:
-			changes.addUnhandledMessage(command.source, command.category, command.parameter)
+			assertNever(parameter)
+			changes.addUnhandledMessage(command)
 			return
 	}
 }

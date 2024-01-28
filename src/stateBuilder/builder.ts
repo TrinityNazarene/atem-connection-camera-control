@@ -1,5 +1,5 @@
 import { Commands } from 'atem-connection'
-import type { AtemCameraControlChanges } from '../state.js'
+import type { AtemCameraControlChanges } from '../changes.js'
 
 export class ChangesBuilder {
 	readonly #changes = new Map<number, AtemCameraControlChanges>()
@@ -37,11 +37,11 @@ export class ChangesBuilder {
 		}
 	}
 
-	addUnhandledMessage(cameraId: number, categoryId: number, parameterId: number): void {
-		const entry = this.#getEntry(cameraId)
+	addUnhandledMessage(command: Commands.CameraControlUpdateCommand): void {
+		const entry = this.#getEntry(command.source)
 		entry.unhandledMessages.push({
-			categoryId,
-			parameterId,
+			categoryId: command.category,
+			parameterId: command.parameter,
 		})
 	}
 

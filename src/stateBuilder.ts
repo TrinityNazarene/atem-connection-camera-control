@@ -1,11 +1,12 @@
 import type { Commands } from 'atem-connection'
 import type { AtemCameraControlState } from './state.js'
-import { ChangesBuilder } from './stateBuilder/builder.js'
+import { ChangesBuilder, assertNever } from './stateBuilder/builder.js'
 import { applyVideoCommand } from './stateBuilder/video.js'
 import { applyLensCommand } from './stateBuilder/lens.js'
 import { applyDisplayCommand } from './stateBuilder/display.js'
 import { applyColorCorrectionCommand } from './stateBuilder/colorCorrection.js'
 import { createEmptyState } from './emptyState.js'
+import { AtemCameraControlCategory } from './ids.js'
 
 export class AtemCameraControlStateBuilder {
 	readonly #states = new Map<number, AtemCameraControlState>()
@@ -48,21 +49,33 @@ export class AtemCameraControlStateBuilder {
 		for (const command of commands) {
 			const state = this.#getOrCreateCamera(command.source)
 
-			switch (command.category) {
-				case 0:
+			const category = command.category as AtemCameraControlCategory
+			switch (category) {
+				case AtemCameraControlCategory.Lens:
 					applyLensCommand(changes, command, state)
 					break
-				case 1:
+				case AtemCameraControlCategory.Video:
 					applyVideoCommand(changes, command, state)
 					break
-				case 4:
+				case AtemCameraControlCategory.Display:
 					applyDisplayCommand(changes, command, state)
 					break
-				case 8:
+				case AtemCameraControlCategory.ColorCorrection:
 					applyColorCorrectionCommand(changes, command, state)
 					break
+				case AtemCameraControlCategory.Audio:
+				case AtemCameraControlCategory.Output:
+				case AtemCameraControlCategory.Tally:
+				case AtemCameraControlCategory.Reference:
+				case AtemCameraControlCategory.Configuration:
+				case AtemCameraControlCategory.Media:
+				case AtemCameraControlCategory.PTZControl:
+					// Not implemented
+					changes.addUnhandledMessage(command)
+					break
 				default:
-					console.log('Unknown category', command.category)
+					assertNever(category)
+					changes.addUnhandledMessage(command)
 					break
 			}
 		}

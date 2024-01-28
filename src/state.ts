@@ -115,31 +115,62 @@ export interface AtemCameraControlState {
 	}
 
 	colorCorrection: {
+		/**
+		 * Color lift adjustments
+		 * In range -2.0 to 2.0
+		 */
 		liftAdjust: ColorAdjust
+
+		/**
+		 * Color gamma adjustments
+		 * In range -4.0 to 4.0
+		 */
 		gammaAdjust: ColorAdjust
+
+		/**
+		 * Color gain adjustments
+		 * In range 0.0 to 16.0
+		 */
 		gainAdjust: ColorAdjust
+
+		/**
+		 * Color offset adjustments
+		 * In range -8.0 to 8.0
+		 */
 		offsetAdjust: ColorAdjust
 
 		contrastAdjust: {
+			/**
+			 * Contrast Pivot
+			 * In range 0.0 to 1.0
+			 */
 			pivot: number
+
+			/**
+			 * Contrast Adjustment
+			 * In range 0.0 to 2.0
+			 */
 			adj: number
 		}
 
+		/**
+		 * Luma mix
+		 * In range 0.0 to 1.0
+		 */
 		lumaMix: number
 
 		colorAdjust: {
+			/**
+			 * Hue adjust
+			 * In range -1.0 to 1.0
+			 */
 			hue: number
+
+			/**
+			 * Saturation
+			 * In range 0.0 to 2.0
+			 */
 			saturation: number
 		}
 	}
-}
-
-export interface AtemCameraControlChanges {
-	readonly cameraId: number
-
-	changes: string[]
-	events: string[]
-
-	unhandledMessages: Array<{ categoryId: number; parameterId: number }>
-	invalidMessages: Array<{ categoryId: number; parameterId: number }>
 }

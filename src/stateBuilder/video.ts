@@ -1,18 +1,20 @@
 import { Commands } from 'atem-connection'
-import { ChangesBuilder } from './builder.js'
+import { ChangesBuilder, assertNever } from './builder.js'
 import { AtemCameraControlState } from '../state.js'
+import { AtemCameraControlVideoParameter } from '../ids.js'
 
 export function applyVideoCommand(
 	changes: ChangesBuilder,
 	command: Commands.CameraControlUpdateCommand,
 	state: AtemCameraControlState
 ): void {
-	switch (command.parameter) {
-		case 1: {
+	const parameter = command.parameter as AtemCameraControlVideoParameter
+	switch (parameter) {
+		case AtemCameraControlVideoParameter.GainCamera4_9: {
 			// Gain (up to Camera 4.9)
 			return
 		}
-		case 2: {
+		case AtemCameraControlVideoParameter.ManualWhiteBalance: {
 			if (!changes.checkMessageParameters(command, Commands.CameraControlDataType.SINT16, 2)) return
 
 			state.video.whiteBalance = [command.properties.numberData[0], command.properties.numberData[1]]
@@ -20,7 +22,7 @@ export function applyVideoCommand(
 			changes.addChange(command.source, 'video.whiteBalance')
 			return
 		}
-		case 5: {
+		case AtemCameraControlVideoParameter.ExposureUs: {
 			if (!changes.checkMessageParameters(command, Commands.CameraControlDataType.SINT32, 1)) return
 
 			const shutterSpeedRaw = 1000000 / command.properties.numberData[0]
@@ -34,7 +36,7 @@ export function applyVideoCommand(
 			changes.addChange(command.source, 'video.shutterSpeed')
 			return
 		}
-		case 8: {
+		case AtemCameraControlVideoParameter.VideoSharpeningLevel: {
 			if (!changes.checkMessageParameters(command, Commands.CameraControlDataType.SINT8, 1)) return
 
 			state.video.videoSharpeningLevel = command.properties.numberData[0]
@@ -42,7 +44,7 @@ export function applyVideoCommand(
 			changes.addChange(command.source, 'video.videoSharpeningLevel')
 			return
 		}
-		case 13: {
+		case AtemCameraControlVideoParameter.Gain: {
 			if (!changes.checkMessageParameters(command, Commands.CameraControlDataType.SINT8, 1)) return
 
 			state.video.gain = command.properties.numberData[0]
@@ -50,7 +52,7 @@ export function applyVideoCommand(
 			changes.addChange(command.source, 'video.gain')
 			return
 		}
-		case 16: {
+		case AtemCameraControlVideoParameter.NDFilterStop: {
 			if (!changes.checkMessageParameters(command, Commands.CameraControlDataType.FLOAT, 1)) return
 
 			state.video.ndFilterStop = command.properties.numberData[0]
@@ -58,8 +60,25 @@ export function applyVideoCommand(
 			changes.addChange(command.source, 'video.ndFilterStop')
 			return
 		}
+
+		case AtemCameraControlVideoParameter.VideoMode:
+		case AtemCameraControlVideoParameter.SetAutoWhiteBalance:
+		case AtemCameraControlVideoParameter.RestoreAutoWhiteBalance:
+		case AtemCameraControlVideoParameter.ExposureOrdinal:
+		case AtemCameraControlVideoParameter.DynamicRangeMode:
+		case AtemCameraControlVideoParameter.RecordingFormat:
+		case AtemCameraControlVideoParameter.SetAutoExpsureMode:
+		case AtemCameraControlVideoParameter.ShutterAngle:
+		case AtemCameraControlVideoParameter.ShutterSpeed:
+		case AtemCameraControlVideoParameter.ISO:
+		case AtemCameraControlVideoParameter.DisplayLUT:
+			// Not implemented
+			changes.addUnhandledMessage(command)
+			return
+
 		default:
-			changes.addUnhandledMessage(command.source, command.category, command.parameter)
+			assertNever(parameter)
+			changes.addUnhandledMessage(command)
 			return
 	}
 }

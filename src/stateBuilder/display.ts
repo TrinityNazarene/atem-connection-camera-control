@@ -1,14 +1,16 @@
 import { Commands } from 'atem-connection'
-import { ChangesBuilder } from './builder.js'
+import { ChangesBuilder, assertNever } from './builder.js'
 import { AtemCameraControlState } from '../state.js'
+import { AtemCameraControlDisplayParameter } from '../ids.js'
 
 export function applyDisplayCommand(
 	changes: ChangesBuilder,
 	command: Commands.CameraControlUpdateCommand,
 	state: AtemCameraControlState
 ): void {
-	switch (command.parameter) {
-		case 4: {
+	const parameter = command.parameter as AtemCameraControlDisplayParameter
+	switch (parameter) {
+		case AtemCameraControlDisplayParameter.ColorBarEnable: {
 			if (!changes.checkMessageParameters(command, Commands.CameraControlDataType.SINT8, 1)) return
 
 			// TODO - should this be expressed in seconds shown?
@@ -17,8 +19,20 @@ export function applyDisplayCommand(
 			return
 		}
 
+		case AtemCameraControlDisplayParameter.Brightness:
+		case AtemCameraControlDisplayParameter.ExposureAndFocusTools:
+		case AtemCameraControlDisplayParameter.ZebraLevel:
+		case AtemCameraControlDisplayParameter.PeakingLevel:
+		case AtemCameraControlDisplayParameter.FocusAssist:
+		case AtemCameraControlDisplayParameter.ProgramReturnFeedEnable:
+		case AtemCameraControlDisplayParameter.TimecodeSource:
+			// Not implemented
+			changes.addUnhandledMessage(command)
+			return
+
 		default:
-			changes.addUnhandledMessage(command.source, command.category, command.parameter)
+			assertNever(parameter)
+			changes.addUnhandledMessage(command)
 			return
 	}
 }
