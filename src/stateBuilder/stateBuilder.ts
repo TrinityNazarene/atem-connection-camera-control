@@ -7,6 +7,7 @@ import { applyDisplayCommand } from './display'
 import { applyColorCorrectionCommand } from './colorCorrection'
 import { createEmptyState } from '../emptyState'
 import { AtemCameraControlCategory } from '../ids'
+import { AtemCameraControlChanges } from '../changes'
 
 export class AtemCameraControlStateBuilder {
 	readonly #states = new Map<number, AtemCameraControlState>()
@@ -39,10 +40,8 @@ export class AtemCameraControlStateBuilder {
 		return state
 	}
 
-	applyCommands(commands: Commands.CameraControlUpdateCommand[]): void {
-		if (commands.length === 0) return
-
-		console.log(`TODO - apply ${commands.length} commands`)
+	applyCommands(commands: Commands.CameraControlUpdateCommand[]): AtemCameraControlChanges[] {
+		if (commands.length === 0) return []
 
 		const changes = new ChangesTracker()
 
@@ -80,8 +79,6 @@ export class AtemCameraControlStateBuilder {
 			}
 		}
 
-		console.log(`computed changes: ${JSON.stringify(changes.getResult(), undefined, 2)}`)
-
-		// TODO - report paths
+		return changes.getResult()
 	}
 }
