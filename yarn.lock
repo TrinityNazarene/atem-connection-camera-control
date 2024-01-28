@@ -18,14 +18,14 @@ __metadata:
   dependencies:
     "@sofie-automation/code-standard-preset": "npm:^2.5.2"
     "@types/node": "npm:18"
-    atem-connection: "npm:^3.4.0"
+    atem-connection: "npm:3.4.1-nightly-fix-camera-control-float-encoding-20240128-155053-c17fb338.0"
     open-cli: "npm:^8.0.0"
     pinst: "npm:^3.0.0"
     rimraf: "npm:^5.0.5"
     tslib: "npm:^2.6.2"
     typescript: "npm:^5.3.3"
   peerDependencies:
-    atem-connection: ^3.4.0
+    atem-connection: ^3.4.1-nightly-fix-camera-control-float-encoding-20240128-155053-c17fb338.0
   languageName: unknown
   linkType: soft
 
@@ -586,9 +586,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"atem-connection@portal:/home/julus/Projects/tv-automation-atem-connection::locator=%40atem-connection%2Fcamera-control%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "atem-connection@portal:/home/julus/Projects/tv-automation-atem-connection::locator=%40atem-connection%2Fcamera-control%40workspace%3A."
+"atem-connection@npm:3.4.1-nightly-fix-camera-control-float-encoding-20240128-155053-c17fb338.0":
+  version: 3.4.1-nightly-fix-camera-control-float-encoding-20240128-155053-c17fb338.0
+  resolution: "atem-connection@npm:3.4.1-nightly-fix-camera-control-float-encoding-20240128-155053-c17fb338.0"
   dependencies:
     "@julusian/freetype2": "npm:^1.1.2"
     debug: "npm:^4.3.4"
@@ -600,8 +600,9 @@ __metadata:
     threadedclass: "npm:^1.2.1"
     tslib: "npm:^2.6.2"
     wavefile: "npm:^8.4.6"
+  checksum: abb59ce80e380f8492229996f6daca0613e088b93b90f01f22db955b2f89e87df4dfa4ebdb8789b9254efd89e455f4ad4a5e130a8aaa26e349b91c36d8f71401
   languageName: node
-  linkType: soft
+  linkType: hard
 
 "balanced-match@npm:^1.0.0":
   version: 1.0.2
