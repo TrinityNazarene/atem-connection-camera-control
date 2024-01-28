@@ -3,8 +3,8 @@
   "version": "0.0.1",
   "packageManager": "yarn@4.0.2",
   "description": "Library for ATEM Camera control using atem-connection.",
-  "main": "dist/index.js",
-  "typings": "dist/index.d.ts",
+  "main": "dist/main.js",
+  "typings": "dist/main.d.ts",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -41,8 +41,8 @@
     "cov-open": "open-cli coverage/lcov-report/index.html",
     "docs": "run docs:html && open-cli docs/index.html",
     "docs:test": "run docs:html",
-    "docs:html": "typedoc --tsconfig tsconfig.docs.json --entryPoints src/index.ts --excludePrivate --theme default --out docs",
-    "docs:json": "typedoc --tsconfig tsconfig.docs.json --json docs/typedoc.json --entryPoints src/index.ts",
+    "docs:html": "typedoc --tsconfig tsconfig.docs.json --entryPoints src/main.ts --excludePrivate --theme default --out docs",
+    "docs:json": "typedoc --tsconfig tsconfig.docs.json --json docs/typedoc.json --entryPoints src/main.ts",
     "release": "sofie-version",
     "reset": "git clean -dfx && git reset --hard && yarn",
     "validate:dependencies": "yarn npm audit --environment production && run license-validate",
@@ -57,7 +57,6 @@
   },
   "files": [
     "/dist",
-    "/assets",
     "/CHANGELOG.md",
     "/README.md",
     "/LICENSE"
@@ -76,6 +75,7 @@
     "pinst": "^3.0.0",
     "rimraf": "^5.0.5",
     "ts-jest": "^29.1.2",
+    "typedoc": "^0.25.7",
     "typescript": "^5.3.3"
   },
   "prettier": "@sofie-automation/code-standard-preset/.prettierrc.json",
