@@ -23,6 +23,7 @@ jobs:
           node-version: 18.x
       - name: Prepare Environment
         run: |
+          corepack enable
           yarn install
           yarn build
         env:
@@ -41,7 +42,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [14.x, 16.x, 18.x, 20.x]
+        node-version: [18.x, 20.x]
 
     steps:
       - uses: actions/checkout@v4
@@ -51,6 +52,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Prepare Environment
         run: |
+          corepack enable
           yarn install
         env:
           CI: true
@@ -118,6 +120,7 @@ jobs:
       - name: Prepare build
         if: ${{ steps.do-publish.outputs.tag }}
         run: |
+          corepack enable
           yarn install
           yarn build
         env:
@@ -158,6 +161,7 @@ jobs:
   #         node-version: 18.x
   #     - name: Prepare Environment
   #       run: |
+  #         corepack enable
   #         yarn install
   #       env:
   #         CI: true
@@ -185,6 +189,7 @@ jobs:
   #         node-version: 18.x
   #     - name: Prepare Environment
   #       run: |
+  #         corepack enable
   #         yarn install
   #       env:
   #         CI: true
