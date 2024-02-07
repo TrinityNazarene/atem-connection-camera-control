@@ -1,6 +1,6 @@
 # ATEM connection camera control - @atem-connection/camera-control
 
-[![Node CI](https://github.com/julusian/atem-connection-camera-control/actions/workflows/CI.yaml/badge.svg)](https://github.com/julusian/atem-connection-camera-control/actions/workflows/CI.yaml)
+[![Node CI](https://github.com/julusian/atem-connection-camera-control/actions/workflows/node.yaml/badge.svg)](https://github.com/julusian/atem-connection-camera-control/actions/workflows/node.yaml)
 [![npm](https://img.shields.io/npm/v/@atem-connection/camera-control)](https://www.npmjs.com/package/@atem-connection/camera-control)
 
 ## Usage
