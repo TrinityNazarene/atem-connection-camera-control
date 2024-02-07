@@ -29,7 +29,7 @@ __metadata:
     "@sofie-automation/code-standard-preset": "npm:^2.5.2"
     "@types/jest": "npm:^29.5.11"
     "@types/node": "npm:18.19.10"
-    atem-connection: "npm:3.4.1-nightly-fix-camera-control-float-encoding-20240128-155053-c17fb338.0"
+    atem-connection: "npm:^3.5.0"
     jest: "npm:^29.7.0"
     jest-extended: "npm:^4.0.2"
     open-cli: "npm:^8.0.0"
@@ -40,7 +40,7 @@ __metadata:
     typedoc: "npm:^0.25.7"
     typescript: "npm:^5.3.3"
   peerDependencies:
-    atem-connection: ^3.4.1-nightly-fix-camera-control-float-encoding-20240128-155053-c17fb338.0 || ^3.5.0
+    atem-connection: ^3.5.0
   languageName: unknown
   linkType: soft
 
@@ -1433,9 +1433,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"atem-connection@npm:3.4.1-nightly-fix-camera-control-float-encoding-20240128-155053-c17fb338.0":
-  version: 3.4.1-nightly-fix-camera-control-float-encoding-20240128-155053-c17fb338.0
-  resolution: "atem-connection@npm:3.4.1-nightly-fix-camera-control-float-encoding-20240128-155053-c17fb338.0"
+"atem-connection@npm:^3.5.0":
+  version: 3.5.0
+  resolution: "atem-connection@npm:3.5.0"
   dependencies:
     "@julusian/freetype2": "npm:^1.1.2"
     debug: "npm:^4.3.4"
@@ -1447,7 +1447,7 @@ __metadata:
     threadedclass: "npm:^1.2.1"
     tslib: "npm:^2.6.2"
     wavefile: "npm:^8.4.6"
-  checksum: 10c0/abb59ce80e380f8492229996f6daca0613e088b93b90f01f22db955b2f89e87df4dfa4ebdb8789b9254efd89e455f4ad4a5e130a8aaa26e349b91c36d8f71401
+  checksum: 10c0/43283a726aa06c3a40781c982f0ff74901d2d0e18c7e4dca53bb49c4734f0b3116b6ebec5709aae80414d5e775892fc3ebb55dab58baf64ef7daaf443d28649b
   languageName: node
   linkType: hard
 
