@@ -1,6 +1,6 @@
 {
   "name": "@atem-connection/camera-control",
-  "version": "0.0.1",
+  "version": "0.1.0-0",
   "packageManager": "yarn@4.0.2",
   "description": "Library for ATEM Camera control using atem-connection.",
   "main": "dist/main.js",
@@ -62,7 +62,7 @@
     "/LICENSE"
   ],
   "peerDependencies": {
-    "atem-connection": "^3.4.1-nightly-fix-camera-control-float-encoding-20240128-155053-c17fb338.0"
+    "atem-connection": "^3.4.1-nightly-fix-camera-control-float-encoding-20240128-155053-c17fb338.0 || ^3.5.0"
   },
   "devDependencies": {
     "@sofie-automation/code-standard-preset": "^2.5.2",

@@ -40,7 +40,7 @@ __metadata:
     typedoc: "npm:^0.25.7"
     typescript: "npm:^5.3.3"
   peerDependencies:
-    atem-connection: ^3.4.1-nightly-fix-camera-control-float-encoding-20240128-155053-c17fb338.0
+    atem-connection: ^3.4.1-nightly-fix-camera-control-float-encoding-20240128-155053-c17fb338.0 || ^3.5.0
   languageName: unknown
   linkType: soft
 
