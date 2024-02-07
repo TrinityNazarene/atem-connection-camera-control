@@ -1,7 +1,7 @@
 {
   "name": "@atem-connection/camera-control",
   "version": "0.1.0-0",
-  "packageManager": "yarn@4.0.2",
+  "packageManager": "yarn@4.1.0",
   "description": "Library for ATEM Camera control using atem-connection.",
   "main": "dist/main.js",
   "typings": "dist/main.d.ts",
